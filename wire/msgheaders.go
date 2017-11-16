@@ -66,11 +66,14 @@ func (msg *MsgHeaders) BtcDecode(r io.Reader, pver uint32, enc MessageEncoding) 
 		}
 
 		// Ensure the transaction count is zero for headers.
+
 		if txCount > 0 {
-			str := fmt.Sprintf("block headers may not contain "+
-				"transactions [count %v]", txCount)
-			return messageError("MsgHeaders.BtcDecode", str)
+			// remove for bc2
+			//			str := fmt.Sprintf("block headers may not contain "+
+			//				"transactions [count %v]", txCount)
+			//			return messageError("MsgHeaders.BtcDecode", str)
 		}
+
 		msg.AddBlockHeader(bh)
 	}
 

@@ -153,6 +153,10 @@ type Params struct {
 	// BIP44 coin type used in the hierarchical deterministic path for
 	// address generation.
 	HDCoinType uint32
+
+	// Some spinoff coins such as "bitcoin cash" and "bitcoin gold"
+	// have implemented a "forkID" for mixing into the sighash
+	ForkID uint32
 }
 
 // MainNetParams defines the network parameters for the main Bitcoin network.
@@ -284,6 +288,120 @@ var BC2NetParams = Params{
 	// BIP44 coin type used in the hierarchical deterministic path for
 	// address generation.
 	HDCoinType: 2,
+}
+
+// BTGNetParams are the parameters for the bitcoin gold network
+// This network forked off in november 2017 or so; seems similar to mainnet
+// and bitcoin cash; but has a forkID flag set to
+var BTGNetParams = Params{
+	Name:        "btg",
+	Net:         wire.MainNet,
+	DefaultPort: "8444",
+	DNSSeeds:    []string{},
+
+	// Chain parameters
+	GenesisBlock:             &bc2GenesisBlock,
+	GenesisHash:              &bc2GenesisHash,
+	PowLimit:                 bc2NetPowLimit,
+	PowLimitBits:             0x1d7fffff,
+	CoinbaseMaturity:         10,
+	SubsidyReductionInterval: 210000,
+	TargetTimespan:           time.Hour * 1,   // 1 hour
+	TargetTimePerBlock:       time.Minute * 1, // 1 minute
+	RetargetAdjustmentFactor: 4,               // 25% less, 400% more
+	ReduceMinDifficulty:      false,
+	MinDiffReductionTime:     time.Minute * 20, // TargetTimePerBlock * 2
+	GenerateSupported:        false,
+
+	// Checkpoints ordered from oldest to newest.
+	Checkpoints: []Checkpoint{},
+
+	// Enforce current block version once majority of the network has
+	// upgraded.
+	// 51% (51 / 100)
+	// Reject previous block versions once a majority of the network has
+	// upgraded.
+	// 75% (75 / 100)
+	BlockEnforceNumRequired: 51,
+	BlockRejectNumRequired:  75,
+	BlockUpgradeNumToCheck:  100,
+
+	// Mempool parameters
+	RelayNonStdTxs: true,
+
+	// Address encoding magics
+	PubKeyHashAddrID: 0x26, // starts with G
+	ScriptHashAddrID: 0x59, // starts with d
+	Bech32Prefix:     "btg",
+	PrivateKeyID:     0x80, // same as mainnet
+
+	// BIP32 hierarchical deterministic extended key magics
+	HDPrivateKeyID: [4]byte{0x04, 0x35, 0x83, 0x94}, // starts with tprv
+	HDPublicKeyID:  [4]byte{0x04, 0x35, 0x87, 0xcf}, // starts with tpub
+
+	// BIP44 coin type used in the hierarchical deterministic path for
+	// address generation.
+	HDCoinType: 79,
+
+	// ForkID is 79 because gold / Au, right.
+	ForkID: 79,
+}
+
+// BCHNetParams are the parameters for the bitcoin cash network
+// This network forked off in august 2017 or so; seems similar to mainnet
+// but has a forkID flag set to 0, and segwit-style signatures everywhere.
+var BCHNetParams = Params{
+	Name:        "bch",
+	Net:         wire.MainNet,
+	DefaultPort: "8444",
+	DNSSeeds:    []string{},
+
+	// Chain parameters
+	GenesisBlock:             &bc2GenesisBlock,
+	GenesisHash:              &bc2GenesisHash,
+	PowLimit:                 bc2NetPowLimit,
+	PowLimitBits:             0x1d7fffff,
+	CoinbaseMaturity:         10,
+	SubsidyReductionInterval: 210000,
+	TargetTimespan:           time.Hour * 1,   // 1 hour
+	TargetTimePerBlock:       time.Minute * 1, // 1 minute
+	RetargetAdjustmentFactor: 4,               // 25% less, 400% more
+	ReduceMinDifficulty:      false,
+	MinDiffReductionTime:     time.Minute * 20, // TargetTimePerBlock * 2
+	GenerateSupported:        false,
+
+	// Checkpoints ordered from oldest to newest.
+	Checkpoints: []Checkpoint{},
+
+	// Enforce current block version once majority of the network has
+	// upgraded.
+	// 51% (51 / 100)
+	// Reject previous block versions once a majority of the network has
+	// upgraded.
+	// 75% (75 / 100)
+	BlockEnforceNumRequired: 51,
+	BlockRejectNumRequired:  75,
+	BlockUpgradeNumToCheck:  100,
+
+	// Mempool parameters
+	RelayNonStdTxs: true,
+
+	// BCH addresses are the same as mainnet, as far as I know
+	PubKeyHashAddrID: 0x00,          // starts with 1
+	ScriptHashAddrID: 0x05,          // starts with 3
+	PrivateKeyID:     0x80,          // starts with 5 (uncompressed) or K (compressed)
+	Bech32Prefix:     "bitcoincash", // I think they did that.
+
+	// BIP32 hierarchical deterministic extended key magics
+	HDPrivateKeyID: [4]byte{0x04, 0x35, 0x83, 0x94}, // starts with tprv
+	HDPublicKeyID:  [4]byte{0x04, 0x35, 0x87, 0xcf}, // starts with tpub
+
+	// BIP44 coin type used in the hierarchical deterministic path for
+	// address generation.
+	HDCoinType: 111, // just making one up
+
+	// ForkID is 0, but you still need to use it
+	ForkID: 0,
 }
 
 // LiteCoinTestNet4Params are the parameters for the litecoin test network 4.

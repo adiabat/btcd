@@ -41,11 +41,11 @@ func RawTxInWitnessSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
 // the given transaction, with hashType appended to it.
 // Similar to RawTxInWitnessSignature / BIP0143 but hashType is hardcoded
 func RawTxInBCHSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
-	amt int64, subScript []byte, key *btcec.PrivateKey) ([]byte, error) {
+	amt int64, subScript []byte, hashType SigHashType,
+	key *btcec.PrivateKey) ([]byte, error) {
 
 	// for BCH sigs
-	var SigHashBCHAll SigHashType = 0x41
-	hashType := SigHashBCHAll
+	//	hashType := SigHashForkID | SigHashAll
 
 	parsedScript, err := ParseScript(subScript)
 	if err != nil {
@@ -63,10 +63,13 @@ func RawTxInBCHSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
 }
 
 // BCHSignatureScript is like WitnessScript but for BCH signatures.
-func BCHSignatureScript(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int, amt int64,
-	subscript []byte, privKey *btcec.PrivateKey, compress bool) ([]byte, error) {
+func BCHSignatureScript(tx *wire.MsgTx, sigHashes *TxSigHashes,
+	idx int, amt int64,
+	subscript []byte, hashType SigHashType,
+	privKey *btcec.PrivateKey, compress bool) ([]byte, error) {
 
-	sig, err := RawTxInBCHSignature(tx, sigHashes, idx, amt, subscript, privKey)
+	sig, err := RawTxInBCHSignature(
+		tx, sigHashes, idx, amt, subscript, hashType, privKey)
 	if err != nil {
 		return nil, err
 	}
