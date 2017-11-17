@@ -296,7 +296,7 @@ var BC2NetParams = Params{
 var BTGNetParams = Params{
 	Name:        "btg",
 	Net:         wire.MainNet, // yup they use the same magic.
-	DefaultPort: "8444",
+	DefaultPort: "8338",
 	DNSSeeds:    []string{"dnsseed.bitcoingold.org"},
 
 	// Chain parameters
